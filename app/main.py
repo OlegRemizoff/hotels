@@ -3,8 +3,12 @@ from typing import Optional
 from datetime import date
 from pydantic import BaseModel
 
+from app.bookings.routers import router as routers_bookings
+
 
 app = FastAPI(debug=True)
+app.include_router(routers_bookings)
+
 
 class SBooking(BaseModel):
     rom_id: int
@@ -48,6 +52,4 @@ def get_hotels():
 
 
 
-@app.post('/bookings')
-def add_book(booking: SBooking):
-    pass
+
