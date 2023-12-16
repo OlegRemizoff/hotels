@@ -25,7 +25,7 @@ async def login_user(response: Response, user_data: UserAuth):
     user = await authenticate_user(user_data.email, user_data.password)
     if not user:
         return HTTPException(status_code=status.HTTP_401_UNAUTHORIZED)
-    access_token = create_access_token({"sub": user.id})
+    access_token = create_access_token({"sub": str(user.id)})
     response.set_cookie("bookings_access_token", access_token, httponly=True) # добавляем наш токен в куки браузера
     return {"access_token": access_token}
     
