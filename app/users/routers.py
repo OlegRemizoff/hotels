@@ -1,7 +1,9 @@
-from fastapi import APIRouter, HTTPException, Response, status
+from fastapi import APIRouter, HTTPException, Response, Depends, status
 from .schemas import UserAuth
 from .dao import UsersDAO
-from .auth import get_password_hash, verify_password, authenticate_user, create_access_token
+from .auth import get_password_hash, authenticate_user, create_access_token
+from .models import Users
+from .dependencies import get_current_user
 
 router = APIRouter(
     prefix="/auth",
@@ -24,8 +26,17 @@ async def register_user(user_data: UserAuth):
 async def login_user(response: Response, user_data: UserAuth):
     user = await authenticate_user(user_data.email, user_data.password)
     if not user:
-        return HTTPException(status_code=status.HTTP_401_UNAUTHORIZED)
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED)
     access_token = create_access_token({"sub": str(user.id)})
     response.set_cookie("bookings_access_token", access_token, httponly=True) # добавляем наш токен в куки браузера
     return {"access_token": access_token}
-    
+
+
+@router.post("/logout")
+async def login_user(response: Response):
+    response.delete_cookie("bookings_access_token")
+
+
+@router.get("/me")
+async def read_users_me(current_user: Users = Depends(get_current_user)):
+    return current_user
