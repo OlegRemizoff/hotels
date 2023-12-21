@@ -1,4 +1,6 @@
 from fastapi import APIRouter, FastAPI, Depends
+from datetime import date
+from sqlalchemy import select, delete, insert, func, and_, or_
 from app.users.models import Users
 from app.users.dependencies import get_current_user
 
@@ -26,6 +28,14 @@ async def get_one_booking(id: int) -> SBooking:
 
 
 @router.get("")
-async def get_bookings(user: Users = Depends(get_current_user)):
+async def get_bookings(user: Users = Depends(get_current_user)) -> list[SBooking]:
     print(user, type(user), user.email)
     return await BookingDAO.find_all(user_id=user.id)
+
+
+@router.post("")
+async def add_booking(
+    room_id: int, date_from: date, date_to: date,
+    user: Users = Depends(get_current_user)
+    ):
+    pass
