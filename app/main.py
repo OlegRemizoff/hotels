@@ -3,14 +3,16 @@ from typing import Optional
 from datetime import date
 from pydantic import BaseModel
 
-from app.bookings.routers import router as routers_bookings
-from app.users.routers import router as routers_users
+from app.bookings.routers import router as router_bookings
+from app.users.routers import router as router_users
+from app.pages.routers import router as router_pages
 
 
 app = FastAPI(debug=True)
 
-app.include_router(routers_users)
-app.include_router(routers_bookings)
+app.include_router(router_users)
+app.include_router(router_bookings)
+app.include_router(router_pages)
 
 
 class SBooking(BaseModel):
